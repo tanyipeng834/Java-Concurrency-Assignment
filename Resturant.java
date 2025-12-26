@@ -1,8 +1,26 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
+
 import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 public class Resturant{
+
+    static BlockingQueue<Integer> orderPlacementQueue;
+    static BlockingQueue<Integer> preparedOrderQueue;
+    static ThreadPoolExecutor chefPool;
+    static ThreadPoolExecutor waiterPool;
+    static int currentOrderNo;
+
+
+   
+    
+
+
+
 
     static final class Config{
         final int Chefs;
@@ -46,13 +64,18 @@ public String toString() {
 
     public static void main(String[] args) {
         Config inputConfig = readUserInput("config.txt");
-        System.out.println(inputConfig);
+        
+        orderPlacementQueue = new ArrayBlockingQueue<>(inputConfig.orderQueueSize);
+        preparedOrderQueue = new ArrayBlockingQueue<>(inputConfig.serveQueueSize);
+
+
 
   
 
 }
 
 static Config readUserInput(String fileName){
+    
     // Create an static array for the config object values
     int[] configValues = new int[8];
     File userInputFile = new File(fileName);
@@ -106,6 +129,22 @@ static Config readUserInput(String fileName){
 
 
 }
+
+static void createWaiters(int noOfWaiters){
+    // Create pool of waiters to execute tasks of order placement and serving
+    waiterPool = new ThreadPoolExecutor(noOfWaiters,noOfWaiters,0L,TimeUnit.MILLISECONDS,new LinkedBlockingQueue<>());
+    
+
+}
+static void createChefs(int noOfChefs)
+{
+    // Create tasks of chef pool which 
+    chefPool = new ThreadPoolExecutor(noOfChefs, noOfChefs, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+
+}
+
+
+
 }
 
 
