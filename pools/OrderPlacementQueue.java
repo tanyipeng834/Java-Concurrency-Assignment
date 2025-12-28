@@ -9,7 +9,7 @@ public class OrderPlacementQueue {
     private volatile int[] orderQueue;
     private volatile int orderCount=0;
     private volatile int queueHead=0;
-    private volatile int queueCount=0;
+   
     // Create a lock so that only a producer or consumer can access the bounded buffer at any single time.
     private final Lock lock = new ReentrantLock(false);
     Condition full = lock.newCondition();

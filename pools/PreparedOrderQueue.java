@@ -9,7 +9,7 @@ public class PreparedOrderQueue {
     private volatile int[] preparedOrderQueue;
     private volatile int orderCount=0;
     private volatile int queueHead=0;
-    private volatile int queueCount=0;
+
     // Create a lock so that only a producer or consumer can access the bounded buffer at any single time.
     private final Lock lock = new ReentrantLock(false);
     Condition full = lock.newCondition();
@@ -28,7 +28,7 @@ public class PreparedOrderQueue {
         
     }
 
-    public void putOrder(){
+    public void putOrder(int orderId){
         // Producer cannot add order if the queue is full
         // use the lock to access shared buffer and order count
         lock.lock();
@@ -38,7 +38,7 @@ public class PreparedOrderQueue {
             full.await();   
                 }
         int avail = (queueHead + orderCount)% preparedOrderQueue.length;
-        preparedOrderQueue[avail] = orderCount;
+        preparedOrderQueue[avail] = orderId;
         orderCount ++;
         // The buffer is guranteed not to be empty and should signal to the ones that are waiting
         // on the empty condition.
