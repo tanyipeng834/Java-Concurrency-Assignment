@@ -9,7 +9,7 @@ import pools.PreparedOrderQueue;
 
 public class Chef implements Runnable {
     
-    private volatile static int ordersCooked=0;
+    private  static int ordersCooked=0;
     static Lock lock = new ReentrantLock(false);
     OrderPlacementQueue orderQueue;
     PreparedOrderQueue preparedOrderQueue;
@@ -38,21 +38,15 @@ public class Chef implements Runnable {
             // obtain the order id from the order queue but this may block infinitely 
             // if all orders have been served and 
             
-            lock.lock();
-
-
-
-            try{
-            if(ordersCooked>=Orders){
-                break;
-            }
-            ordersCooked++;
-        }
-
-        finally{
-            lock.unlock();
-        }
+           
         // getOrder only if not all orders
+         lock.lock();
+  try {
+    if (ordersCooked >= Orders) break;
+    ordersCooked++;   // reserve 1 order to cook
+  } finally {
+    lock.unlock();
+  }
         int orderId = orderQueue.getOrder();
         
             try{
@@ -60,14 +54,18 @@ public class Chef implements Runnable {
             catch (InterruptedException e){
                 Thread.currentThread().interrupt();
             }
-             long ts = System.currentTimeMillis();
+   
+             
+    preparedOrderQueue.putOrder(orderId);
+    long ts = System.currentTimeMillis();
             String logLine = String.format(
     "[%d] Chef %d: Order Prepared - Order %d",
     ts,
     this.id,
     orderId);
     Logger.log(logLine);
-    preparedOrderQueue.putOrder(orderId);
+
+     
           
 
         }
@@ -88,4 +86,3 @@ public class Chef implements Runnable {
     
 
     
-

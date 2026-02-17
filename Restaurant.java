@@ -7,7 +7,7 @@ import pools.OrderPlacementQueue;
 import pools.PreparedOrderQueue;
 import staff.Chef;
 import staff.Waiter;
-public class Resturant{
+public class Restaurant{
     static OrderPlacementQueue orderPlacementQueue;
     static PreparedOrderQueue preparedOrderQueue;
 
@@ -129,7 +129,7 @@ static Config readUserInput(String fileName){
 static void createWaiters(int noOfWaiters, int placementOrderTime, int preparationOrderTime, int serveOrderTime,int orders){
     // Create pool of waiters to execute tasks of order placement and serving
     for (int i =0;i<noOfWaiters;i++){
-        Thread  waiterThread = new Thread(new Waiter(i,Resturant.orderPlacementQueue,Resturant.preparedOrderQueue,orders,placementOrderTime,serveOrderTime));
+        Thread  waiterThread = new Thread(new Waiter(i,Restaurant.orderPlacementQueue,Restaurant.preparedOrderQueue,orders,placementOrderTime,serveOrderTime));
         waiterThread.start();
        
     }

@@ -6,9 +6,10 @@ import java.util.concurrent.locks.Lock;
 
 public class PreparedOrderQueue {
 
-    private volatile int[] preparedOrderQueue;
-    private volatile int orderCount=0;
-    private volatile int queueHead=0;
+    private  int[] preparedOrderQueue;
+    private int orderCount=0;
+    private int queueHead=0;
+   
 
     // Create a lock so that only a producer or consumer can access the bounded buffer at any single time.
     private final Lock lock = new ReentrantLock(false);
@@ -38,6 +39,7 @@ public class PreparedOrderQueue {
             full.await();   
                 }
         int avail = (queueHead + orderCount)% preparedOrderQueue.length;
+        
         preparedOrderQueue[avail] = orderId;
         orderCount ++;
         // The buffer is guranteed not to be empty and should signal to the ones that are waiting

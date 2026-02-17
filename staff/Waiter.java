@@ -8,8 +8,8 @@ import pools.OrderPlacementQueue;
 import pools.PreparedOrderQueue;
 
 public class Waiter implements Runnable {
-    private volatile static int ordersTaken=0;
-    private volatile static int ordersServed=0;
+    private static int ordersTaken=0;
+    private  static int ordersServed=0;
     static Lock lock = new ReentrantLock(false);
     OrderPlacementQueue orderQueue;
     PreparedOrderQueue preparedOrderQueue;
@@ -26,28 +26,15 @@ public class Waiter implements Runnable {
     public Waiter(int id, OrderPlacementQueue orderQueue, PreparedOrderQueue preparedQueue, int Orders, int placementOrderTime, int serveOrderTime){
         this.id = id;
         this.Orders = Orders;
-
         this.orderQueue = orderQueue;
         this.preparedOrderQueue = preparedQueue;
     }
 
     @Override
     public void run(){
-        int currentOrder;
+        
         while (true){
-            lock.lock();
-
-            try{
-            if(ordersTaken>=Orders){
-                break;
-            }
-            currentOrder = ordersTaken++;
-          
-
-        }
-        finally{
-            lock.unlock();
-        }
+            
 
        
              try{
@@ -59,14 +46,32 @@ public class Waiter implements Runnable {
 
             
             
-            long ts = System.currentTimeMillis();
+        
+    
+
+    lock.lock();
+   
+
+            try{
+            if(ordersTaken>=Orders){
+                break;
+            }
+
+             orderQueue.putOrder();
+        long ts = System.currentTimeMillis();
             String logLine = String.format(
     "[%d] Waiter %d: Order Placed - Order %d",
     ts,
     this.id,
-    currentOrder);
+    ordersTaken);
     Logger.log(logLine);
-    orderQueue.putOrder();
+            ordersTaken++;
+          
+
+        }
+        finally{
+            lock.unlock();
+        }
 
         
             
@@ -82,16 +87,36 @@ public class Waiter implements Runnable {
             
 
         
-        int currentOrderService;
+        
         while(true){
             
-            lock.lock();
+           
+        
+    
+    try{
+            Thread.sleep(serveOrderTime);
+        }
+        catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+        }
+      
+
+     lock.lock();
             try{
             if(ordersServed>=Orders){
 
                 break;
             }
-            currentOrderService = ordersServed++;
+              long ts = System.currentTimeMillis();
+    int currentOrderService = preparedOrderQueue.getOrder();
+        String logLine = String.format(
+    "[%d] Waiter %d: Order Served - Order %d",
+    ts,
+    this.id,
+    currentOrderService);
+    Logger.log(logLine);
+            ordersServed++;
            
         }
         finally{
@@ -100,22 +125,6 @@ public class Waiter implements Runnable {
 
         }
 
-        
-    preparedOrderQueue.getOrder();
-    try{
-            Thread.sleep(serveOrderTime);
-        }
-        catch (InterruptedException e)
-        {
-            Thread.currentThread().interrupt();
-        }
-        long ts = System.currentTimeMillis();
-        String logLine = String.format(
-    "[%d] Waiter %d: Order Served - Order %d",
-    ts,
-    this.id,
-    currentOrderService);
-    Logger.log(logLine);
     
 
 
@@ -135,4 +144,3 @@ public class Waiter implements Runnable {
     
 
     
-
