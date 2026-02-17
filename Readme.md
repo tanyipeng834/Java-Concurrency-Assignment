@@ -9,7 +9,7 @@ Based on the diagram, to ensure that the shared state do not get modified concur
 
 The producer would sleep on the Full Condition as it is not able to produce more items on the bounded buffer while the consumer would sleep on the Empty Condition as it would not be able to consumer any items from the buffer.
 
-## Specifications of the Projects
+## Specifications of the Project
 
 ### Queues
 1. Order Placement Queue - This is where the waiters would place orders and the Chef would also take the orders from to prepare in the Kitchen
