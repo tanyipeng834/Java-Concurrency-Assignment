@@ -1,5 +1,6 @@
-
-![Order Queue Diagram](./images/queue.png)
+<p align="center">
+  <img src="./images/queue.png" alt="Order Queue Diagram" width="600"/>
+</p>
 
 # Simulating the Bounded Buffer Problem on a Restaurant
 For this project, I am simulating the bounded buffer problem with mutiple threads of consumers and producers and then adding in synchronization primitives.
@@ -22,6 +23,7 @@ The producer would sleep on the Full Condition as it is not able to produce more
 ## Running the Program
 
 ` javac -d out $(find . -name "*.java")`
+<br>
 ` java -cp out Restaurant.java`
 
 
